@@ -1,0 +1,20 @@
+body {
+    background-image:url('../img/movies-clipart-stage-4-transparent.png');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-attachment: fixed;
+
+    background-color:rgba(24, 112, 112, 0.911);
+}
+.container{
+    
+       margin-left: 42%;
+       margin-right: 42%;
+       margin-top: 14%;
+       margin-bottom: 13%;
+
+}
+
+.input-error{
+    box-shadow: 0 0 5px red;
+}

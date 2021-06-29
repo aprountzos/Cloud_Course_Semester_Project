@@ -1,0 +1,199 @@
+version: '3'
+
+services:
+
+
+  web:
+    build: 
+      context: ./php
+      dockerfile: Dockerfile
+    container_name: php
+    depends_on:
+      - keyrock
+      - orion
+    volumes:
+      - ./php:/var/www/html/
+    ports:
+     - 80:80
+
+  web_api:
+    build: 
+      context: ./api
+      dockerfile: Dockerfile
+    container_name: web_api
+    depends_on: 
+      - mongo
+    volumes:
+      - ./api:/var/www/html/
+    ports:
+     - 8009:80
+  
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    restart: always
+    environment: 
+      - MONGO_INITDB_DATABASE=movieapp
+      - MONGO_INITDB_ROOT_USERNAME=root
+      - MONGO_INITDB_ROOT_PASSWORD=root
+    volumes: 
+      - ./mongodb/data:/data/db
+    ports:
+      - '27018:27017'
+
+  mongo-express:
+    image: mongo-express:latest
+    restart: always
+    depends_on: 
+      - mongo
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: root
+    ports:
+      - "8081:8081"
+
+
+ 
+  db:
+    restart: always
+    image: mysql:latest
+    container_name: mysql
+    expose:
+        - '3306'
+    ports:
+        - '3306:3306'
+    networks:
+        default:
+            ipv4_address: 172.18.1.6
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_ROOT_USER: root
+    volumes:
+        - ./dbdata:/var/lib/mysql
+
+  phpmyadmin:
+    depends_on: 
+      - db
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    restart: always
+    ports: 
+      - 8080:80
+    environment: 
+      PHA_HOST: db
+      MYSQL_ROOT_PASSWORD: root 
+
+  mongo-orion:
+    image: mongo:latest
+    container_name: mongo-orion
+    restart: always
+    volumes: 
+      - ./mongo-orion/data:/data/db
+    ports:
+      - '27017:27017'
+    expose: 
+      - '27017'
+    networks: 
+      - default
+
+  orion:
+    image: fiware/orion
+    container_name: orion
+    depends_on: 
+      - mongo-orion
+    networks: 
+      - default
+    ports:
+      - "1026:1026"
+    command: -dbhost mongo-orion -logLevel DEBUG -noCache
+    
+  keyrock:
+    image: fiware/idm:7.6.0
+    container_name: fiware-keyrock
+    hostname: keyrock
+    depends_on:
+      - db
+    ports:
+      - "3005:3005"
+      - "443:443"
+    environment:
+      - IDM_DB_PASS=root
+      - IDM_DB_USER=root
+      - IDM_DB_HOST=db
+      - IDM_HOST=http://localhost:3005
+      - IDM_PORT=3005
+      - IDM_ADMIN_USER=admin
+      - IDM_ADMIN_EMAIL=admin@test.com
+      - IDM_ADMIN_PASS=1234
+
+  # mysql-db:
+  #   image: mysql:latest
+  #   hostname: mysql-db
+  #   container_name: db-mysql
+  #   expose:
+  #     - "3306"
+  #   ports:
+  #     - "3306:3306"
+  #   environment:
+  #     - "MYSQL_ROOT_PASSWORD=root"
+  #     - "MYSQL_ROOT_HOST=172.18.1.5"
+  #   volumes:
+  #     - ./mysql-db:/var/lib/mysql
+
+  orion-proxy:
+    image: fiware/pep-proxy
+    container_name: fiware-orion-proxy
+    hostname: orion-proxy
+    depends_on:
+      - keyrock
+    ports:
+      - "1027:1027"
+    expose:
+      - "1027"
+    environment:
+      - PEP_PROXY_APP_HOST=orion
+      - PEP_PROXY_APP_PORT=1026
+      - PEP_PROXY_PORT=1027
+      - PEP_PROXY_IDM_HOST=keyrock
+      - PEP_PROXY_HTTPS_ENABLED=false
+      - PEP_PROXY_AUTH_ENABLED=false
+      - PEP_PROXY_IDM_SSL_ENABLED=false
+      - PEP_PROXY_IDM_PORT=3005
+      - PEP_PROXY_APP_ID=appid
+      - PEP_PROXY_USERNAME=pep_proxy_username
+      - PEP_PASSWORD=pep_proxy_password
+      - PEP_PROXY_PDP=idm
+      - PEP_PROXY_MAGIC_KEY=1234
+
+  myapi-proxy:
+    image: fiware/pep-proxy
+    container_name: fiware-myapi-proxy
+    hostname: myapi-proxy
+    depends_on:
+      - keyrock
+    ports:
+        - "7897:7897"
+    expose:
+        - "7897"
+    environment:
+      - PEP_PROXY_APP_HOST=web_api
+      - PEP_PROXY_APP_PORT=80
+      - PEP_PROXY_PORT=7897
+      - PEP_PROXY_IDM_HOST=keyrock
+      - PEP_PROXY_HTTPS_ENABLED=false
+      - PEP_PROXY_AUTH_ENABLED=false
+      - PEP_PROXY_IDM_SSL_ENABLED=false
+      - PEP_PROXY_IDM_PORT=3005
+      - PEP_PROXY_APP_ID=appid
+      - PEP_PROXY_USERNAME=pep_proxy_username
+      - PEP_PASSWORD=pep_proxy_password
+      - PEP_PROXY_PDP=idm
+      - PEP_PROXY_MAGIC_KEY=1234
+
+networks:
+  default:
+    ipam:
+      config:
+        - subnet: 172.18.1.0/24
+volumes:
+    mysql-db: ~

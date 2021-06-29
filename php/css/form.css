@@ -1,0 +1,51 @@
+
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+  }
+  
+  td,
+  th {
+    text-align: center;
+  
+  }
+  .clickable:hover {
+      background-color:#633;}
+  
+  .clickable:hover td ,.clickable:hover td a{
+      color:#ddd;}
+  
+  
+  .clickable td a{
+      text-decoration: none;
+      padding: 8px;
+      display: block; 
+      
+  }
+  tr {
+    background-color: #ddd;
+    margin-top: 10%;
+  }
+  
+  
+  /* The scrollable part */
+  
+  .scrollable {
+      
+  margin-top: 10%;
+    height: 300px;
+    overflow-y: scroll;
+    border-bottom: 1px solid #ddd;
+    background-color: #ddd;
+    min-width: 100%;
+  }
+  
+  th {
+    position: sticky;
+    background-color: white;
+    z-index: 2;
+    top: 0;
+  
+  }

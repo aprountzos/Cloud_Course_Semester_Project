@@ -1,0 +1,14 @@
+.search{
+    position: fixed;
+    margin-top: 10%;
+}
+.nores{
+    color:white;
+    position: fixed;
+    margin-top: 15%;
+}
+.scrollable {
+    left: 0px;
+    position: fixed;
+    margin-top: 15%;
+}

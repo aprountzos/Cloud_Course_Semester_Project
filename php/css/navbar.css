@@ -1,0 +1,90 @@
+body {
+    background-image:url('../img/movies-clipart-stage-4-transparent.png');
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    background-attachment: fixed;
+
+    background-color:rgba(24, 112, 112, 0.911);
+}
+ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  
+
+}
+
+li {
+  float: left;
+}
+
+li .menu {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  background-color: #4CAF50;
+  border: 2px solid #4CAF50;
+  border-radius: 25px;
+}
+.logout{
+  display: block;
+  color: white;
+  text-decoration: none;
+  text-align: center;
+  padding: 14px 16px;
+  background-color: #4CAF50;
+  border: 2px solid #4CAF50;
+  border-radius: 25px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+}
+.user {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  background-color: #4CAF50;
+  border: 2px solid #4CAF50;
+  border-radius: 25px;
+  border-top-right-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+ .user {
+    float: right;
+}
+
+.dropdown {
+  z-index: 3; /*An element with greater stack order is always in front of an element with a lower stack order. */
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.dropdown-content a {
+
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {background-color: #ddd;}
+
+.dropdown:hover .dropdown-content {display: block;}
+
+.dropdown:hover .dropbtn {background-color: #3e8e41;}
+
+li a:hover, li .menu:hover {
+  background-color: #111;
+}
